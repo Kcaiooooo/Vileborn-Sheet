@@ -632,8 +632,11 @@
     </div>
 
     <script>
+        let isRestoring = false;
+
         // Função para coletar todos os campos e salvar no LocalStorage do navegador
         function saveData() {
+            if (isRestoring) return;
             const data = {};
             // Seleciona elementos com ID (padrão)
             const elements = document.querySelectorAll('input[id], textarea[id], select[id]');
@@ -671,12 +674,20 @@
             data.portrait = (portraitSrc && portraitSrc.startsWith('data:image') && portraitImg.style.display !== 'none') ? portraitSrc : null;
 
             // Salva na memória do navegador sob o nome 'vileborn_save'
-            localStorage.setItem('vileborn_save', JSON.stringify(data));
-            console.log('Ficha salva automaticamente.');
+            try {
+                localStorage.setItem('vileborn_save', JSON.stringify(data));
+                console.log('Ficha salva automaticamente.');
+            } catch (e) {
+                console.error(e);
+                if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+                    alert('Erro ao salvar a ficha: o navegador ficou sem espaço. A imagem escolhida pode ser muito grande, tente carregar uma mais leve.');
+                }
+            }
         }
 
         // Função para recuperar os dados salvos e preencher a ficha
         function loadData() {
+            isRestoring = true;
             const savedData = localStorage.getItem('vileborn_save');
 
             // Limpa containers dinâmicos
@@ -729,6 +740,7 @@
                 simpleSections.forEach(s => addDynamicItem(`${s}-container`));
                 addGift();
             }
+            isRestoring = false;
         }
 
         // Função para adicionar um item dinâmico simples
