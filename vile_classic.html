@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Vileborn - Ficha Interativa Oficial</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=IM+Fell+English:ital@0;1&display=swap');
+
+        :root {
+            --bg-color: #f7f5f0;
+            --text-color: #2b2b2b;
+            --accent-color: #3d5a5c;
+            --blood-color: #8b0000;
+            --font-main: 'Crimson Text', serif;
+            --font-title: 'IM Fell English', serif;
+        }
+
+        body {
+            background-color: #222;
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            transition: background-color 0.5s;
+        }
+
+        .sheet {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.03) 100%),
+                url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.05"/></svg>');
+            width: 1600px;
+            min-height: 1130px; /* A3 landscape approx ratio */
+            padding-bottom: 40px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+            position: relative;
+            box-sizing: border-box;
+            z-index: 1;
+            transition: box-shadow 0.5s, filter 0.5s;
+        }
+
+        input[type="text"], textarea, select {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(0,0,0,0.2);
+            font-family: var(--font-main);
+            color: var(--text-color);
+            font-size: 16px;
+            outline: none;
+            resize: none;
+        }
+
+        input[type="checkbox"] {
+            accent-color: #111;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .watercolor-title {
+            font-family: var(--font-title);
+            font-size: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            display: inline-block;
+            margin-bottom: 15px;
+            margin-top: 25px;
+            color: #111;
+        }
+        .watercolor-title::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: -10px; right: -20px;
+            height: 25px;
+            background: rgba(160, 200, 200, 0.4);
+            transform: translateY(-50%) skew(-10deg);
+            z-index: -1;
+            border-radius: 3px;
+            filter: blur(2px);
+        }
+
+        /* Central Art Overlay */
+        .central-art-container {
+            position: absolute;
+            top: 375px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 350px;
+            height: 350px;
+            z-index: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .central-art {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            mix-blend-mode: multiply;
+            opacity: 0.8;
+            transition: all 0.5s;
+        }
+
+        /* Top Approaches Bridge */
+        .approaches-bridge {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            z-index: 10;
+            pointer-events: auto;
+        }
+        .app-box {
+            width: 90px;
+            height: 90px;
+            border: 2px solid #222;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #f7f6f0;
+            position: relative;
+            z-index: 2;
+        }
+        .app-box span {
+            font-family: var(--font-title);
+            font-size: 11px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .app-box:nth-child(1) { transform: translateY(-25px); }
+        .app-box:nth-child(2) { transform: translateY(-5px); }
+        .app-box:nth-child(3) { transform: translateY(15px); }
+        .app-box:nth-child(4) { transform: translateY(15px); }
+        .app-box:nth-child(5) { transform: translateY(-5px); }
+        .app-box:nth-child(6) { transform: translateY(-25px); }
+
+        .app-box select {
+            border: none;
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            width: 100%;
+        }
+        /* Lines connecting approaches */
+        
+
+        /* Name and Background Lines */
+        .top-lines {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 100px;
+            box-sizing: border-box;
+        }
+        .top-input {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 250px;
+        }
+        .top-input label {
+            font-family: var(--font-title);
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .top-input input {
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Columns */
+        .left-col {
+            position: absolute;
+            top: 150px;
+            left: 60px;
+            width: 350px;
+            z-index: 10;
+        }
+        .right-col {
+            position: absolute;
+            top: 150px;
+            right: 60px;
+            width: 350px;
+            z-index: 10;
+            text-align: right;
+        }
+
+        /* Circles Arc (Personality & Training) */
+        .arc-container {
+            position: absolute;
+            top: 250px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 600px;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .arc-title {
+            position: absolute;
+            font-family: var(--font-title);
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 3px;
+            transform-origin: center;
+            pointer-events: auto;
+            z-index: 20;
+        }
+        .arc-title.pers { left: -20px; top: 250px; transform: rotate(-90deg); }
+        .arc-title.train { right: -20px; top: 250px; transform: rotate(90deg); }
+
+        /* Make dynamic items fit in the layout */
+        .dynamic-item {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            pointer-events: auto;
+        }
+
+        .dynamic-item input[type="text"] {
+            flex: 1;
+            background: transparent;
+            border: none;
+            border-bottom: 1px dotted #999;
+            font-family: serif;
+            font-size: 14px;
+            padding-bottom: 2px;
+        }
+        .dynamic-item textarea {
+            flex: 1;
+            background: transparent;
+            min-height: 25px;
+            border: none;
+            border-bottom: 1px dotted #999;
+            resize: vertical;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-y: hidden;
+        }
+        .dynamic-item button {
+            background: none;
+            border: none;
+            color: var(--blood-color);
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Right column specifics */
+        .condition-item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 15px;
+            text-align: right;
+        }
+        .cond-text {
+            display: flex;
+            flex-direction: column;
+        }
+        .cond-title { font-family: var(--font-title); font-size: 13px; font-weight: bold; }
+        .cond-desc { font-size: 14px; color: #555; font-style: italic; }
+
+        .wound-box {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+        .wound-box input { transform: scale(1.5); margin-left: 15px; }
+
+        /* Bottom Section: Heritage & Gifts */
+        .bottom-section {
+            position: relative;
+            margin-top: 850px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 1400px;
+            z-index: 2;
+            text-align: center;
+        }
+        .heritage-block {
+            margin-bottom: 20px;
+        }
+        .heritage-title {
+            font-family: var(--font-title);
+            font-size: 28px;
+            color: var(--blood-color);
+            margin: 0;
+            text-transform: uppercase;
+        }
+        .heritage-marks input { transform: scale(1.5); margin: 0 5px; }
+        .heritage-desc { font-style: italic; color: #555; margin-top: 5px; }
+
+        .gifts-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            border-top: 1px solid #ccc;
+            padding-top: 20px;
+            position: relative;
+        }
+        .gifts-row::before {
+            content: '';
+            position: absolute;
+            top: -10px; left: 0; right: 0;
+            height: 20px;
+            border-top: 1px solid #ccc;
+            border-radius: 50%;
+        }
+        .gift-column {
+            width: 30%;
+            text-align: center;
+        }
+        .gift-item {
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.5);
+            padding: 10px;
+            border: 1px dashed #ccc;
+        }
+        .gift-item textarea { width: 100%; text-align: center; }
+
+        
+        .arc-circle {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: none; 
+            background: #f7f6f0; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            padding: 10px;
+            transition: all 0.3s;
+            transform: translate(-50%, -50%);
+            pointer-events: auto;
+            z-index: 10;
+        }
+        .arc-circle textarea {
+            width: 100%;
+            height: 100%;
+            border: none;
+            text-align: center;
+            font-size: 13px;
+            background: transparent;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+        .arc-circle button {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #8b0000;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 10px;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .anim-shake { animation: shake 0.5s infinite; }
+        .anim-grayscale { filter: grayscale(100%); }
+        .anim-shadow-fade { opacity: 0.5; filter: blur(2px); }
+        .anim-tremble-fade { animation: shake 0.5s infinite; opacity: 0.5; filter: blur(2px); }
+        .anim-blur-fade { filter: blur(10px); opacity: 0.5; }
+        .anim-red-pulse-fade { animation: redPulseFade 1s forwards; }
+        @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-1px, -2px) rotate(-1deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 30% { transform: translate(3px, 2px) rotate(0deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 50% { transform: translate(-1px, 2px) rotate(-1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 70% { transform: translate(3px, 1px) rotate(-1deg); } 80% { transform: translate(-1px, -1px) rotate(1deg); } 90% { transform: translate(1px, 2px) rotate(0deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
+
+        /* Animations */
+        body.wound-level-1 .sheet { box-shadow: 0 0 30px rgba(139, 0, 0, 0.4); }
+        body.wound-level-2 .sheet { box-shadow: 0 0 50px rgba(139, 0, 0, 0.7); animation: heartbeatPulse 2s infinite; }
+        body.wound-level-3 .sheet { box-shadow: inset 0 0 50px rgba(139,0,0,0.5), 0 0 80px rgba(139,0,0,0.9); animation: heartbeatPulseFast 1s infinite; }
+        body.wound-level-4 .sheet { box-shadow: inset 0 0 100px rgba(0,0,0,0.8), 0 0 100px rgba(139,0,0,1); filter: saturate(0.5); animation: heartbeatPulseFast 1s infinite; }
+        
+        @keyframes heartbeatPulse { 0% { transform: scale(1); } 10% { transform: scale(1.005); } 20% { transform: scale(1); } 100% { transform: scale(1); } }
+        @keyframes heartbeatPulseFast { 0% { transform: scale(1); } 15% { transform: scale(1.01); } 30% { transform: scale(1); } 100% { transform: scale(1); } }
+        
+        body::after { content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 0; transition: box-shadow 1s, background-color 1s; }
+        body.urge-level-1::after { box-shadow: inset 0 0 100px 30px rgba(75, 0, 130, 0.5); }
+        body.urge-level-2::after { box-shadow: inset 0 0 250px 80px rgba(75, 0, 130, 0.8); }
+        body.urge-level-3::after { box-shadow: inset 0 0 500px 150px rgba(40, 0, 80, 1); background-color: rgba(20, 0, 40, 0.4); }
+
+        .anim-dark-flare { animation: darkFlare 1s ease-out forwards; }
+        @keyframes darkFlare { 0% { box-shadow: 0 0 0 rgba(75,0,130,0); } 30% { box-shadow: inset 0 0 40px rgba(75,0,130,0.8); } 100% { box-shadow: 0 0 0 rgba(75,0,130,0); } }
+
+        .toolbar {
+            position: fixed; top: 10px; right: 10px; z-index: 1000;
+        }
+        .toolbar button {
+            background: #2a2a2a; color: #fff; border: none; padding: 10px 20px; font-size: 16px; cursor: pointer; border-radius: 5px; margin-left: 5px;
+        }
+        @media print {
+            .toolbar, button { display: none !important; }
+            body { padding: 0; background: white; }
+            .sheet { width: 100%; height: auto; box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="toolbar">
+        <button onclick="window.location.href='vile.html'">Versão Compacta</button>
+        <button onclick="exportToPDF()">Exportar PDF</button>
+    </div>
+
+    <div class="sheet">
+        
+        <svg class="corner-lines" width="1600" height="200" style="position: absolute; top: 0; left: 0; pointer-events: none; z-index: 0;">
+            <path d="M 0 60 L 500 20" stroke="rgba(0,0,0,0.15)" stroke-width="1.5" />
+            <path d="M 0 80 L 480 30" stroke="rgba(0,0,0,0.1)" stroke-width="1" />
+            
+            <path d="M 1600 60 L 1100 20" stroke="rgba(0,0,0,0.15)" stroke-width="1.5" />
+            <path d="M 1600 80 L 1120 30" stroke="rgba(0,0,0,0.1)" stroke-width="1" />
+        </svg>
+
+        <!-- Arte Central (Retrato) -->
+        <div class="central-art-container" style="border: 1px dashed rgba(139,0,0,0.3); border-radius: 50%; cursor: pointer;" onclick="document.getElementById('portrait-upload').click()">
+<img id="portrait-img" class="central-art" style="width: 100%; height: 100%; object-fit: cover; object-position: center; border-radius: 50%; display: none;">
+            <input type="file" id="portrait-upload" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+            <span id="portrait-placeholder" style="color: rgba(139,0,0,0.6); font-family: var(--font-title); letter-spacing: 2px; text-transform: uppercase;">Anexar Retrato</span>
+        </div>
+
+        <!-- Top Lines (Name / Background) -->
+        <div class="top-lines">
+            <div class="top-input">
+                <label>Origem</label>
+                <input type="text" id="char-bg">
+            </div>
+            <div class="top-input" style="position:absolute; left:50%; top:-10px; transform:translateX(-50%);">
+                <label>Nome do Personagem</label>
+                <input type="text" id="char-name" style="font-size: 20px; text-align:center; font-family: var(--font-title);">
+            </div>
+        </div>
+
+        <!-- Approaches -->
+        
+        
+
+        
+        <svg class="bridge-line" width="1600" height="250" style="position: absolute; top: 20px; left: 0px; z-index: 0; pointer-events: none; border:none;">
+            <path d="M 0 0 Q 800 220 1600 0" stroke="#333" stroke-width="1" fill="none" />
+        </svg>
+
+        <div class="approaches-bridge">
+            <div class="app-box"><span>Força</span><select id="app-force"><option>+0 (d6)</option><option>+1 (d8)</option><option>+2 (d10)</option></select></div>
+            <div class="app-box"><span>Vontade</span><select id="app-willpower"><option>+0 (d6)</option><option>+1 (d8)</option><option>+2 (d10)</option></select></div>
+            <div class="app-box"><span>Influência</span><select id="app-influence"><option>+0 (d6)</option><option>+1 (d8)</option><option>+2 (d10)</option></select></div>
+            <div class="app-box"><span>Razão</span><select id="app-reason"><option>+0 (d6)</option><option>+1 (d8)</option><option>+2 (d10)</option></select></div>
+            <div class="app-box"><span>Precisão</span><select id="app-precision"><option>+0 (d6)</option><option>+1 (d8)</option><option>+2 (d10)</option></select></div>
+            <div class="app-box"><span>Subterfúgio</span><select id="app-subterfuge"><option>+0 (d6)</option><option>+1 (d8)</option><option>+2 (d10)</option></select></div>
+        </div>
+
+        <!-- Left Column -->
+        <div class="left-col" id="section-motives">
+            <div class="watercolor-title">Motivações</div>
+            <div style="margin-bottom: 20px;">
+                <div class="dynamic-item"><input type="checkbox" id="mot-asp-chk"> <input type="text" id="mot-asp" placeholder="Aspiração (Remova um FERIMENTO)"></div>
+                <div class="dynamic-item"><input type="checkbox" id="mot-duty-chk"> <input type="text" id="mot-duty" placeholder="Dever (Remova uma CONDIÇÃO)"></div>
+            </div>
+
+            <div class="watercolor-title">Vínculos <button onclick="addDynamicItem('bonds-container', 'Nome / Força...')" style="background:none; border:none; cursor:pointer; font-size:12px; font-family:sans-serif;">[+ Add]</button></div>
+            <div id="bonds-container"></div>
+            
+            <div class="watercolor-title">Recursos <button onclick="addDynamicItem('resources-container', 'Nome do recurso...')" style="background:none; border:none; cursor:pointer; font-size:12px; font-family:sans-serif;">[+ Add]</button></div>
+            <div id="resources-container"></div>
+            
+            <div class="watercolor-title">Habilidades <button onclick="addDynamicItem('abilities-container', 'Nome da habilidade...')" style="background:none; border:none; cursor:pointer; font-size:12px; font-family:sans-serif;">[+ Add]</button></div>
+            <div id="abilities-container"></div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="right-col">
+            <div class="watercolor-title">Condições</div>
+            <label class="condition-item"><div class="cond-text"><span class="cond-title">Ansiedade</span><span class="cond-desc">-1 em razão, precisão e subterfúgio</span></div><input type="checkbox" id="cond-anxiety"></label>
+            <label class="condition-item"><div class="cond-text"><span class="cond-title">Exaustão</span><span class="cond-desc">-1 em força, vontade e influência</span></div><input type="checkbox" id="cond-exhaustion"></label>
+            <label class="condition-item"><div class="cond-text"><span class="cond-title">Vergonha</span><span class="cond-desc">Você não pode usar sua PERSONALIDADE</span></div><input type="checkbox" id="cond-shame"></label>
+            <label class="condition-item"><div class="cond-text"><span class="cond-title">Medo</span><span class="cond-desc">Você não pode usar seu TREINAMENTO</span></div><input type="checkbox" id="cond-fear"></label>
+            <label class="condition-item"><div class="cond-text"><span class="cond-title">Confusão</span><span class="cond-desc">Você não pode usar suas MOTIVAÇÕES</span></div><input type="checkbox" id="cond-confusion"></label>
+            <label class="condition-item"><div class="cond-text"><span class="cond-title">Raiva</span><span class="cond-desc">Você não pode usar seus VÍNCULOS</span></div><input type="checkbox" id="cond-anger"></label>
+
+            <div class="watercolor-title" style="margin-top: 40px;">Ferimentos</div>
+            <div class="wound-box"><input type="checkbox" id="wound-1"></div>
+            <div class="wound-box"><input type="checkbox" id="wound-2"></div>
+            <div class="wound-box"><input type="checkbox" id="wound-3"></div>
+            <div class="wound-box"><input type="checkbox" id="wound-4"></div>
+            <span class="cond-desc" style="display:block; text-align:right;">Fora de jogo. Você não pode AGIR ou realizar TESTES.</span>
+        </div>
+
+        <!-- Arc Containers (Personality & Training) -->
+        <div class="arc-container" id="section-arc">
+
+            <svg width="800" height="600" style="position: absolute; top:0; left:0; pointer-events:none; z-index: 0;">
+                <!-- Straight line from Force box to top of left arc -->
+                <path d="M 230 -100 L 290 110" fill="none" stroke="#333" stroke-width="1" />
+                <!-- Perfect circular arc for left side -->
+                <path d="M 290 110 A 220 220 0 0 0 290 490" fill="none" stroke="#333" stroke-width="1" />
+                
+                <!-- Straight line from Subterfuge box to top of right arc -->
+                <path d="M 570 -100 L 510 110" fill="none" stroke="#333" stroke-width="1" />
+                <!-- Perfect circular arc for right side -->
+                <path d="M 510 110 A 220 220 0 0 1 510 490" fill="none" stroke="#333" stroke-width="1" />
+            </svg>
+
+            <span class="arc-title pers">Personalidade <button onclick="addDynamicItem('personality-container', 'Traço...')" style="background:none;border:none;cursor:pointer;">+</button></span>
+            <div id="section-personality" style="position: absolute; left:0; top:0; width:100%; height:100%;"><div id="personality-container" style="position:absolute; width:100%; height:100%;"></div></div>
+            
+            <span class="arc-title train">Treinamento <button onclick="addDynamicItem('training-container', 'Perícia...')" style="background:none;border:none;cursor:pointer;">+</button></span>
+            <div id="section-training" style="position: absolute; left:0; top:0; width:100%; height:100%;"><div id="training-container" style="position:absolute; width:100%; height:100%;"></div></div>
+        </div>
+
+        <!-- Bottom Section -->
+        <div class="bottom-section">
+
+            <svg width="1600" height="200" style="position: absolute; top: -150px; left: -100px; pointer-events: none; z-index: 0; overflow: visible;">
+                <path d="M 0 200 Q 800 0 1600 200" fill="none" stroke="#333" stroke-width="1" />
+                <path id="bottomArcPath" d="M 0 200 Q 800 0 1600 200" fill="none" stroke="none" />
+                <text font-size="11" fill="rgba(139,0,0,0.4)" font-family="serif" letter-spacing="3">
+                    <textPath href="#bottomArcPath" startOffset="0%">ᚠᚢᚦᚨᚱᚲ ᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖᛗᛚᛜᛟᛞ ᚠᚢᚦᚨᚱᚲ ᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖᛗᛚᛜᛟᛞ ᚠᚢᚦᚨᚱᚲ ᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖᛗᛚᛜᛟᛞ ᚠᚢᚦᚨᚱᚲ ᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖᛗᛚᛜᛟᛞ ᚠᚢᚦᚨᚱᚲ ᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖᛗᛚᛜᛟᛞ ᚠᚢᚦᚨᚱᚲ ᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖᛗᛚᛜᛟᛞ ᚠᚢᚦᚨᚱᚲ ᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖᛗᛚᛜᛟᛞ ᚠᚢᚦᚨᚱᚲ ᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖᛗᛚᛜᛟᛞ ᚠᚢᚦᚨᚱᚲ ᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖᛗᛚᛜᛟᛞ ᚠᚢᚦᚨᚱᚲ ᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖᛗᛚᛜᛟᛞ ᚠᚢᚦᚨᚱᚲ ᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖᛗᛚᛜᛟᛞ ᚠᚢᚦᚨᚱᚲ ᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖᛗᛚᛜᛟᛞ ᚠᚢᚦᚨᚱᚲ ᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖᛗᛚᛜᛟᛞ ᚠᚢᚦᚨᚱᚲ ᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖᛗᛚᛜᛟᛞ ᚠᚢᚦᚨᚱᚲ ᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖᛗᛚᛜᛟᛞ ᚠᚢᚦᚨᚱᚲ ᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖᛗᛚᛜᛟᛞ ᚠᚢᚦᚨᚱᚲ ᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖᛗᛚᛜᛟᛞ ᚠᚢᚦᚨᚱᚲ ᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖᛗᛚᛜᛟᛞ </textPath>
+                </text>
+            </svg>
+
+            <div class="heritage-block">
+                <input type="text" id="heritage-name" placeholder="Digite o nome da sua Herança (ex: Hexbringer, Bloodsinger)..." style="text-align: center; font-size: 24px; font-family: var(--font-title); color: var(--blood-color); font-weight: bold; width: 500px; border:none; outline:none; background:transparent;" onchange="updateHeritageArt()">
+                <div class="heritage-marks" style="margin: 10px 0;">
+                    <input type="checkbox" id="heritage-m1"><input type="checkbox" id="heritage-m2"><input type="checkbox" id="heritage-m3">
+                </div>
+                <div class="heritage-desc">
+                    Marque uma caixa e enfrente um TESTE SOMBRIO.<br>
+                    Você considera o d12 como parte de sua reserva, mas isso também pode desencadear uma COMPLICAÇÃO.
+                </div>
+                
+                <div class="watercolor-title" style="margin-top: 20px; font-size: 16px;">Impulso</div><br>
+                <input type="text" id="heritage-urge-desc" placeholder="Descreva seu Impulso Sombrio..." style="width: 600px; text-align: center; color: var(--blood-color); font-weight: bold;">
+                <div class="heritage-desc">
+                    <button onclick="resetMarks()" style="background: var(--bg-color); border: 1px solid #8b0000; color: #8b0000; padding: 4px 10px; cursor: pointer; font-family: serif; letter-spacing: 1px; margin-right: 10px; border-radius: 3px; font-weight: bold; transition: background 0.3s;" onmouseover="this.style.background='rgba(139,0,0,0.1)'" onmouseout="this.style.background='var(--bg-color)'">LIMPAR MARCAS</button>
+                    Remova todas as marcas da sua HERANÇA e DONS.
+                </div>
+            </div>
+
+            <div class="gifts-row">
+                <div style="position: absolute; top: -30px; left: 50%; transform: translateX(-50%); background: var(--bg-color); padding: 0 20px; font-family: var(--font-title); font-size: 13px; letter-spacing: 2px;">DONS <button onclick="addGift()" style="font-family: sans-serif; font-size:12px; cursor:pointer;">[+ Add]</button></div>
+                <div id="gifts-container" style="display: flex; gap: 20px; justify-content: center; width: 100%; flex-wrap: wrap;">
+                    <!-- Gifts dinâmicos entram aqui -->
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px; display: flex; justify-content: space-around; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 20px; font-family: var(--font-title); font-size: 14px;">
+                <div>PRIMEIRO ATO <input type="checkbox" id="act-1-app"><label>Abordagem</label> <input type="checkbox" id="act-1-per"><label>Personalidade</label> <input type="checkbox" id="act-1-tra"><label>Treinamento</label> <input type="checkbox" id="act-1-gif"><label>Dom</label></div>
+                <div>SEGUNDO ATO <input type="checkbox" id="act-2-app"><label>Abordagem</label> <input type="checkbox" id="act-2-per"><label>Personalidade</label> <input type="checkbox" id="act-2-tra"><label>Treinamento</label> <input type="checkbox" id="act-2-gif"><label>Dom</label></div>
+                <div>TERCEIRO ATO <input type="checkbox" id="act-3-app"><label>Abordagem</label> <input type="checkbox" id="act-3-per"><label>Personalidade</label> <input type="checkbox" id="act-3-tra"><label>Treinamento</label> <input type="checkbox" id="act-3-gif"><label>Dom</label></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+
+        let isRestoring = false;
+
+        // Função para coletar todos os campos e salvar no LocalStorage do navegador
+        function saveData() {
+            if (isRestoring) return;
+            const data = {};
+            // Seleciona elementos com ID (padrão)
+            const elements = document.querySelectorAll('input[id], textarea[id], select[id]');
+
+            elements.forEach(el => {
+                if (el.type === 'file') return; // Skip file inputs
+                if (el.type === 'checkbox') {
+                    data[el.id] = el.checked;
+                } else {
+                    if (el.hasAttribute('data-base-value')) {
+                        data[el.id] = el.getAttribute('data-base-value');
+                    } else {
+                        data[el.id] = el.value;
+                    }
+                }
+            });
+
+            // Seções Dinâmicas Simples
+            const simpleSections = ['personality', 'bonds', 'training', 'resources', 'abilities'];
+            simpleSections.forEach(section => {
+                const items = document.querySelectorAll(`.${section}-item textarea`);
+                data[section] = Array.from(items).map(i => i.value);
+            });
+
+            // Coleta Gifts Dinâmicos (com checkbox)
+            const giftItems = document.querySelectorAll('.gift-item');
+            data.gifts = Array.from(giftItems).map(item => ({
+                desc: item.querySelector('textarea').value,
+                checked: item.querySelector('input[type="checkbox"]').checked
+            }));
+
+            // Coleta Imagem de Retrato
+            const portraitImg = document.getElementById('portrait-img');
+            const portraitSrc = portraitImg.src;
+            data.portrait = (portraitSrc && portraitSrc.startsWith('data:image') && portraitImg.style.display !== 'none') ? portraitSrc : null;
+
+            // Salva na memória do navegador sob o nome 'vileborn_save'
+            try {
+                localStorage.setItem('vileborn_save', JSON.stringify(data));
+                console.log('Ficha salva automaticamente.');
+            } catch (e) {
+                console.error(e);
+                if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+                    alert('Erro ao salvar a ficha: o navegador ficou sem espaço. A imagem escolhida pode ser muito grande, tente carregar uma mais leve.');
+                }
+            }
+        }
+
+        // Função para recuperar os dados salvos e preencher a ficha
+        function loadData() {
+            isRestoring = true;
+            const savedData = localStorage.getItem('vileborn_save');
+
+            // Limpa containers dinâmicos
+            const simpleSections = ['personality', 'bonds', 'training', 'resources', 'abilities'];
+            simpleSections.forEach(s => {
+                const el = document.getElementById(`${s}-container`);
+                if (el) el.innerHTML = '';
+            });
+            const giftsContainer = document.getElementById('gifts-container');
+            if (giftsContainer) giftsContainer.innerHTML = '';
+
+            if (savedData) {
+                const data = JSON.parse(savedData);
+
+                // Carrega campos padrão
+                for (const key in data) {
+                    if (['gifts', 'personality', 'bonds', 'training', 'resources', 'abilities', 'portrait'].includes(key)) continue;
+                    const el = document.getElementById(key);
+                    if (el && el.type !== 'file') {
+                        if (el.type === 'checkbox') {
+                            el.checked = data[key];
+                        } else {
+                            el.value = data[key];
+                        }
+                    }
+                }
+
+                // Reconstrói Seções Simples
+                simpleSections.forEach(s => {
+                    if (data[s] && data[s].length > 0) {
+                        data[s].forEach(val => addDynamicItem(`${s}-container`, '', val));
+                    } else {
+                        addDynamicItem(`${s}-container`);
+                    }
+                });
+
+                // Reconstrói Gifts
+                if (data.gifts && data.gifts.length > 0) {
+                    data.gifts.forEach(g => addGift(g.desc, g.checked));
+                } else {
+                    addGift();
+                }
+                // Reconstrói Retrato
+                if (data.portrait) {
+                    displayImage(data.portrait);
+                } else {
+                    displayImage(null);
+                }
+
+                console.log('Ficha carregada com sucesso.');
+                setTimeout(updateAllConditions, 100);
+            } else {
+                // Inicializa com um espaço vazio se for a primeira vez
+                simpleSections.forEach(s => addDynamicItem(`${s}-container`));
+                addGift();
+            }
+            isRestoring = false;
+        }
+
+        
+        function positionArcs() {
+            const radius = 220;
+            const centerX = 400; // width of arc-container is 800
+            const centerY = 300;
+
+            const persContainer = document.getElementById('personality-container');
+            if(persContainer) {
+                const pItems = Array.from(persContainer.children);
+                pItems.forEach((item, index) => {
+                    let total = pItems.length;
+                    // Spread from 240 deg to 120 deg (left side arc)
+                    let angle = total > 1 ? 240 - (index / (total - 1)) * 120 : 180;
+                    let rad = angle * Math.PI / 180;
+                    let x = centerX + radius * Math.cos(rad);
+                    let y = centerY + radius * Math.sin(rad);
+                    item.style.left = x + 'px';
+                    item.style.top = y + 'px';
+                });
+            }
+
+            const trainContainer = document.getElementById('training-container');
+            if(trainContainer) {
+                const tItems = Array.from(trainContainer.children);
+                tItems.forEach((item, index) => {
+                    let total = tItems.length;
+                    // Spread from -60 deg to 60 deg (right side arc)
+                    let angle = total > 1 ? -60 + (index / (total - 1)) * 120 : 0;
+                    let rad = angle * Math.PI / 180;
+                    let x = centerX + radius * Math.cos(rad);
+                    let y = centerY + radius * Math.sin(rad);
+                    item.style.left = x + 'px';
+                    item.style.top = y + 'px';
+                });
+            }
+
+            // Adjust bottom section margin dynamically to prevent overlap
+            const leftCol = document.querySelector('.left-col');
+            const rightCol = document.querySelector('.right-col');
+            const bottomSec = document.querySelector('.bottom-section');
+            if(leftCol && rightCol && bottomSec) {
+                const maxH = Math.max(leftCol.offsetHeight, rightCol.offsetHeight);
+                if(maxH > 700) {
+                    bottomSec.style.marginTop = (maxH + 200) + 'px';
+                } else {
+                    bottomSec.style.marginTop = '850px';
+                }
+            }
+        }
+
+
+        // Função para adicionar um item dinâmico simples
+        function addDynamicItem(containerId, placeholder = 'Digite aqui...', value = '') {
+            const container = document.getElementById(containerId);
+            const itemDiv = document.createElement('div');
+            const sectionName = containerId.split('-')[0];
+            
+            if (sectionName === 'personality' || sectionName === 'training') {
+                itemDiv.className = `arc-circle ${sectionName}-item`;
+                
+                const uniqueId = 'circlePath-' + Math.random().toString(36).substr(2, 9);
+                const runes = "ᚠᚢᚦᚨᚱᚲ ᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖᛗᛚᛜᛟᛞ ᚠᚢᚦᚨᚱᚲ ᚷᚹᚺᚾᛁᛃᛈᛉᛊᛏᛒᛖ";
+                
+                const svgBorder = `
+                    <svg viewBox="0 0 100 100" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:-1;">
+                        <path id="${uniqueId}" d="M 50, 50 m -45, 0 a 45,45 0 1,1 90,0 a 45,45 0 1,1 -90,0" fill="none" />
+                        <text font-size="7" fill="rgba(139,0,0,0.6)" letter-spacing="2">
+                            <textPath href="#${uniqueId}" startOffset="0%">${runes}</textPath>
+                        </text>
+                    </svg>
+                `;
+                
+                itemDiv.innerHTML = svgBorder + `
+                    <textarea placeholder="${placeholder}" oninput="this.style.height = \'\'; this.style.height = this.scrollHeight + \'px\'">${value}</textarea>
+                    <button onclick="this.parentElement.remove(); positionArcs(); saveData();">X</button>
+                `;
+                container.appendChild(itemDiv);
+                positionArcs();
+            } else {
+                itemDiv.className = `dynamic-item ${sectionName}-item`;
+                itemDiv.style.display = 'flex';
+                itemDiv.style.gap = '10px';
+                itemDiv.style.marginBottom = '10px';
+                itemDiv.innerHTML = `
+                    <textarea placeholder="${placeholder}" style="flex: 1; min-height: 40px;" oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'" oninput="this.style.height = \'\'; this.style.height = this.scrollHeight + \'px\'">${value}</textarea>
+                    <button onclick="this.parentElement.remove(); saveData();" style="padding: 2px 8px; background: #8b0000; border: none; font-size: 0.8em; color: white;">X</button>
+                `;
+                container.appendChild(itemDiv);
+            }
+        }
+
+// Função para adicionar um novo Gift dinamicamente (com checkbox)
+        function addGift(description = '', used = false) {
+            const container = document.getElementById('gifts-container');
+            if (!container) return;
+            const giftDiv = document.createElement('div');
+            giftDiv.className = 'input-group gift-item';
+            giftDiv.style.marginBottom = '20px';
+            giftDiv.innerHTML = `
+                <div style="display: flex; gap: 10px; align-items: flex-start;">
+                    <textarea placeholder="Descrição do dom..." style="flex: 1; min-height: 60px;" oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'">${description}</textarea>
+                    <button onclick="this.closest('.gift-item').remove(); saveData();" style="padding: 2px 8px; background: #8b0000; border: none; font-size: 0.8em; color: white;">X</button>
+                </div>
+                <div class="checkbox-grid" style="margin-top: 5px;">
+                    <input type="checkbox" ${used ? 'checked' : ''} onchange="handleGiftUse(this)"> <label style="font-size: 0.8em; font-weight: normal;">Usado</label>
+                </div>
+            `;
+            container.appendChild(giftDiv);
+            saveData();
+        }
+
+        // --- Funções de Imagem de Retrato ---
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 1.5 * 1024 * 1024) {
+                    alert('Imagem muito grande! Por favor escolha uma imagem menor que 1.5MB.');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    displayImage(e.target.result);
+                    saveData();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function clearPortrait(event) {
+            if (event) event.stopPropagation();
+            displayImage(null);
+            saveData();
+        }
+
+        function displayImage(dataUrl) {
+            const img = document.getElementById('portrait-img');
+            const placeholder = document.getElementById('portrait-placeholder');
+            const clearBtn = document.getElementById('portrait-clear');
+            if (dataUrl && dataUrl.startsWith('data:image')) {
+                img.src = dataUrl;
+                img.style.display = 'block';
+                placeholder.style.display = 'none';
+                if (clearBtn) clearBtn.style.display = 'block';
+            } else {
+                img.removeAttribute('src');
+                img.style.display = 'none';
+                placeholder.style.display = 'flex';
+                if (clearBtn) clearBtn.style.display = 'none';
+            }
+        }
+
+        function clearPortrait(event) {
+            if (event) event.stopPropagation();
+            displayImage(null);
+            saveData();
+        }
+
+        // --- Função de Exportação PDF ---
+        function exportToPDF() {
+            const element = document.querySelector('.sheet');
+            
+            // Pega as dimensões reais da ficha (em pixels)
+            const w = element.scrollWidth;
+            const h = element.scrollHeight;
+
+            // Configura a página do PDF para ter o tamanho exato da ficha, 
+            // garantindo que não haja quebra de página e tudo caiba em uma folha.
+            const opt = {
+                margin: 0,
+                filename: 'vileborn_character_sheet.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'px', format: [w, h], orientation: w > h ? 'landscape' : 'portrait' }
+            };
+
+            // Notifica o usuário pois pode demorar alguns segundos
+            const originalBtnText = event.target.innerText;
+            event.target.innerText = "Gerando...";
+            event.target.disabled = true;
+
+            html2pdf().from(element).set(opt).save().then(() => {
+                event.target.innerText = originalBtnText;
+                event.target.disabled = false;
+            }).catch(err => {
+                console.error("Erro ao gerar PDF:", err);
+                event.target.innerText = originalBtnText;
+                event.target.disabled = false;
+                alert("Houve um erro ao gerar o PDF. Tente usar a função de imprimir do navegador (Ctrl+P).");
+            });
+        }
+
+        // Tenta carregar automaticamente ao abrir a página
+        window.onload = () => {
+            loadData();
+            setTimeout(() => {
+                resizeAllTextareas();
+                positionArcs();
+            }, 50);
+        };
+
+        // Função para auto-ajustar altura do textarea
+        function autoResizeTextarea(el) {
+            el.style.height = 'auto';
+            el.style.height = el.scrollHeight + 'px';
+        }
+
+        function resizeAllTextareas() {
+            document.querySelectorAll('textarea').forEach(autoResizeTextarea);
+        }
+
+        // Auto-save com debounce e auto-resize
+        let saveTimeout;
+        document.addEventListener('input', (e) => {
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(saveData, 1000);
+
+            if (e.target.tagName.toLowerCase() === 'textarea') {
+                autoResizeTextarea(e.target);
+            }
+        });
+
+        document.addEventListener('change', (e) => {
+            if (e.target.tagName === 'SELECT') {
+                if (e.target.hasAttribute('data-base-value')) {
+                    e.target.removeAttribute('data-base-value');
+                }
+                saveData();
+                updateAllConditions();
+            } else if (e.target.type === 'checkbox') {
+                saveData();
+                if (e.target.id && e.target.id.startsWith('cond-')) {
+                    applyCondition(e.target.id, e.target.checked, false);
+                } else if (e.target.id && e.target.id.startsWith('wound-')) {
+                    updateWoundEffects();
+                } else if (e.target.id && e.target.id.startsWith('heritage-m')) {
+                    updateUrgeEffects();
+                }
+            } else {
+                saveData();
+            }
+        });
+
+        // Setup das Condições e Animações
+        const conditionMap = {
+            'cond-anxiety': { type: 'penalty', targets: ['app-reason', 'app-precision', 'app-subterfuge'], animClass: 'anim-shake' },
+            'cond-exhaustion': { type: 'penalty', targets: ['app-force', 'app-willpower', 'app-influence'], animClass: 'anim-grayscale' },
+            'cond-shame': { type: 'hide', target: 'section-personality', animClass: 'anim-shadow-fade' },
+            'cond-fear': { type: 'hide', target: 'section-training', animClass: 'anim-tremble-fade' },
+            'cond-confusion': { type: 'hide', target: 'section-motives', animClass: 'anim-blur-fade' },
+            'cond-anger': { type: 'hide', target: 'bonds-container', animClass: 'anim-red-pulse-fade' }
+        };
+
+        function calculatePenalizedValue(val) {
+            let str = String(val);
+            let match = str.match(/([+-]\d+)\s*\((d\d+)\)/);
+            if (match) {
+                let mod = parseInt(match[1]);
+                let newMod = mod - 1;
+                return `${newMod >= 0 ? '+' + newMod : newMod} (${match[2]})`;
+            }
+            return val;
+        }
+
+        function updateAllConditions() {
+            Object.keys(conditionMap).forEach(condId => {
+                let cb = document.getElementById(condId);
+                if (cb) applyCondition(condId, cb.checked, true);
+            });
+            updateWoundEffects();
+            updateUrgeEffects();
+        }
+
+        function applyCondition(condId, isChecked, isInstant = false) {
+            let config = conditionMap[condId];
+            if (!config) return;
+
+            if (config.type === 'penalty') {
+                config.targets.forEach(appId => {
+                    let select = document.getElementById(appId);
+                    if (!select) return;
+                    let row = select.closest('.app-box');
+                    
+                    if (isChecked) {
+                        if (!select.hasAttribute('data-base-value')) {
+                            select.setAttribute('data-base-value', select.value);
+                        }
+                        let penalizedVal = calculatePenalizedValue(select.getAttribute('data-base-value'));
+                        let optExists = Array.from(select.options).some(o => o.value === penalizedVal);
+                        if (!optExists) {
+                            let opt = document.createElement('option');
+                            opt.value = penalizedVal;
+                            opt.text = penalizedVal;
+                            select.add(opt);
+                        }
+                        select.value = penalizedVal;
+                        if (row) row.classList.add(config.animClass);
+                    } else {
+                        if (select.hasAttribute('data-base-value')) {
+                            select.value = select.getAttribute('data-base-value');
+                            select.removeAttribute('data-base-value');
+                        }
+                        if (row) row.classList.remove(config.animClass);
+                    }
+                });
+            } else if (config.type === 'hide') {
+                let section = document.getElementById(config.target);
+                if (!section) return;
+
+                if (isChecked) {
+                    if (isInstant) {
+                        section.classList.add('condition-hidden');
+                    } else {
+                        section.classList.remove('condition-hidden');
+                        section.classList.add(config.animClass);
+                        setTimeout(() => {
+                            let cb = document.getElementById(condId);
+                            if (cb && cb.checked) {
+                                section.classList.add('condition-hidden');
+                            }
+                            section.classList.remove(config.animClass);
+                        }, 1000);
+                    }
+                } else {
+                    section.classList.remove('condition-hidden');
+                    section.classList.remove(config.animClass);
+                }
+            }
+        }
+
+        // Funções para atualizar efeitos globais
+        function updateWoundEffects() {
+            let woundCount = 0;
+            for (let i = 1; i <= 4; i++) {
+                let cb = document.getElementById(`wound-${i}`);
+                if (cb && cb.checked) woundCount++;
+            }
+            
+            document.body.classList.remove('wound-level-1', 'wound-level-2', 'wound-level-3', 'wound-level-4');
+            if (woundCount > 0) {
+                document.body.classList.add(`wound-level-${woundCount}`);
+            }
+        }
+
+        function updateUrgeEffects() {
+            let urgeCount = 0;
+            for (let i = 1; i <= 3; i++) {
+                let cb = document.getElementById(`heritage-m${i}`);
+                if (cb && cb.checked) urgeCount++;
+            }
+
+            document.body.classList.remove('urge-level-1', 'urge-level-2', 'urge-level-3');
+            if (urgeCount > 0) {
+                document.body.classList.add(`urge-level-${urgeCount}`);
+            }
+        }
+
+        function handleGiftUse(cb) {
+            saveData();
+            if (cb.checked) {
+                let item = cb.closest('.gift-item');
+                if (item) {
+                    item.classList.remove('anim-dark-flare');
+                    void item.offsetWidth; // trigger reflow to restart animation
+                    item.classList.add('anim-dark-flare');
+                }
+            }
+        }
+
+        // Função para resetar as marcas de heritage e gifts
+        function resetMarks() {
+            if (confirm('Tem certeza de que deseja limpar as marcas de Herança e o uso de Dons?')) {
+                // Checkboxes fixas
+                const fixedIds = ['heritage-m1', 'heritage-m2', 'heritage-m3'];
+                fixedIds.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.checked = false;
+                });
+
+                // Checkboxes dinâmicas (Gifts)
+                const giftChecks = document.querySelectorAll('#gifts-container input[type="checkbox"]');
+                giftChecks.forEach(cb => cb.checked = false);
+
+                console.log('Marks reset.');
+                saveData();
+                updateUrgeEffects();
+            }
+        }
+    
+
+        // --- Novas Funções Específicas do Layout ---
+        
+        // Atualiza a arte central baseada no nome digitado na herança
+        function updateHeritageArt() {
+            const name = document.getElementById('heritage-name').value.trim();
+            const img = document.getElementById('heritage-art-img');
+            if(name) {
+                // Tenta carregar o PNG local se o nome bater com os arquivos
+                // Nomes nos arquivos: Vil_Sheet_Hexbringer-1.png
+                // Ignora maiúsculas/minúsculas
+                let formatted = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+                img.src = "Vil_Sheet_" + formatted + "-1.png";
+                img.style.display = 'block';
+            } else {
+                img.style.display = 'none';
+            }
+            saveData();
+        }
+        
+        // Substituir a chamada no onload
+        const oldOnLoad = window.onload;
+        window.onload = () => {
+            if(oldOnLoad) oldOnLoad();
+            updateHeritageArt();
+        };
+    </script>
+</body>
+</html>
