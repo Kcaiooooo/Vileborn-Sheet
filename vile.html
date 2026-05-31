@@ -823,13 +823,19 @@
         // --- Função de Exportação PDF ---
         function exportToPDF() {
             const element = document.querySelector('.sheet');
-            // Configurações da biblioteca html2pdf
+            
+            // Pega as dimensões reais da ficha (em pixels)
+            const w = element.scrollWidth;
+            const h = element.scrollHeight;
+
+            // Configura a página do PDF para ter o tamanho exato da ficha, 
+            // garantindo que não haja quebra de página e tudo caiba em uma folha.
             const opt = {
-                margin: 0.2,
+                margin: 0,
                 filename: 'vileborn_character_sheet.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'in', format: 'a3', orientation: 'landscape' }
+                jsPDF: { unit: 'px', format: [w, h], orientation: w > h ? 'landscape' : 'portrait' }
             };
 
             // Notifica o usuário pois pode demorar alguns segundos
