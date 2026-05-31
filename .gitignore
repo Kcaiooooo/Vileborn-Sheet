@@ -1,3 +1,6 @@
 *.pdf
 *.txt
 vile_experimental.html
+*.png
+*.py
+*backup*
