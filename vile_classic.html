@@ -380,8 +380,8 @@
         
         .anim-shake { animation: shake 0.5s infinite; }
         .anim-grayscale { filter: grayscale(100%); }
-        .anim-shadow-fade { opacity: 0.5; filter: blur(2px); }
-        .anim-tremble-fade { animation: shake 0.5s infinite; opacity: 0.5; filter: blur(2px); }
+        .anim-shadow-fade { opacity: 0.5; filter: blur(2px); pointer-events: none; }
+        .anim-tremble-fade { animation: shake 0.5s infinite; opacity: 0.5; filter: blur(2px); pointer-events: none; }
         .anim-blur-fade { filter: blur(10px); opacity: 0.5; }
         .anim-red-pulse-fade { animation: redPulse 2s infinite; }
         @keyframes redPulse { 0% { box-shadow: inset 0 0 10px rgba(139,0,0,0.5); } 50% { box-shadow: inset 0 0 30px rgba(139,0,0,0.8); } 100% { box-shadow: inset 0 0 10px rgba(139,0,0,0.5); } }
@@ -946,8 +946,8 @@
         const conditionMap = {
             'cond-anxiety': { type: 'penalty', targets: ['app-reason', 'app-precision', 'app-subterfuge'], animClass: 'anim-shake' },
             'cond-exhaustion': { type: 'penalty', targets: ['app-force', 'app-willpower', 'app-influence'], animClass: 'anim-grayscale' },
-            'cond-shame': { type: 'hide', target: 'section-personality', animClass: 'condition-hidden' },
-            'cond-fear': { type: 'hide', target: 'section-training', animClass: 'condition-hidden' },
+            'cond-shame': { type: 'hide', target: 'section-personality', animClass: 'anim-shadow-fade' },
+            'cond-fear': { type: 'hide', target: 'section-training', animClass: 'anim-tremble-fade' },
             'cond-confusion': { type: 'hide', target: 'section-motives', animClass: 'condition-hidden' },
             'cond-anger': { type: 'hide', target: 'section-bonds', animClass: 'condition-hidden' }
         };
