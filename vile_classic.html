@@ -402,8 +402,8 @@
         body.urge-level-2::after { box-shadow: inset 0 0 250px 80px rgba(75, 0, 130, 0.8); }
         body.urge-level-3::after { box-shadow: inset 0 0 500px 150px rgba(40, 0, 80, 1); background-color: rgba(20, 0, 40, 0.4); }
 
-        .anim-dark-flare { animation: darkFlare 1s ease-out forwards; }
-        @keyframes darkFlare { 0% { box-shadow: 0 0 0 rgba(75,0,130,0); } 30% { box-shadow: inset 0 0 40px rgba(75,0,130,0.8); } 100% { box-shadow: 0 0 0 rgba(75,0,130,0); } }
+        .anim-dark-flare { animation: darkFlare 2s infinite; background-color: rgba(75,0,130,0.1) !important; }
+        @keyframes darkFlare { 0% { box-shadow: inset 0 0 20px rgba(75,0,130,0.5); } 50% { box-shadow: inset 0 0 50px rgba(75,0,130,0.9); } 100% { box-shadow: inset 0 0 20px rgba(75,0,130,0.5); } }
 
         .toolbar {
             position: fixed; top: 10px; right: 10px; z-index: 1000;
@@ -1045,12 +1045,12 @@
 
         function handleGiftUse(cb) {
             saveData();
-            if (cb.checked) {
-                let item = cb.closest('.gift-item');
-                if (item) {
-                    item.classList.remove('anim-dark-flare');
-                    void item.offsetWidth; // trigger reflow to restart animation
+            let item = cb.closest('.gift-item');
+            if (item) {
+                if (cb.checked) {
                     item.classList.add('anim-dark-flare');
+                } else {
+                    item.classList.remove('anim-dark-flare');
                 }
             }
         }
