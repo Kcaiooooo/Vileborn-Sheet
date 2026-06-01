@@ -1024,21 +1024,8 @@
                 if (!section) return;
 
                 if (isChecked) {
-                    if (isInstant) {
-                        section.classList.add('condition-hidden');
-                    } else {
-                        section.classList.remove('condition-hidden');
-                        section.classList.add(config.animClass);
-                        setTimeout(() => {
-                            let cb = document.getElementById(condId);
-                            if (cb && cb.checked) {
-                                section.classList.add('condition-hidden');
-                            }
-                            section.classList.remove(config.animClass);
-                        }, 1000);
-                    }
+                    section.classList.add(config.animClass);
                 } else {
-                    section.classList.remove('condition-hidden');
                     section.classList.remove(config.animClass);
                 }
             }
