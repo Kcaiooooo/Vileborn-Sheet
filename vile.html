@@ -255,6 +255,7 @@
 
         .anim-blur-fade {
             animation: blurFade 1s forwards;
+            pointer-events: none;
         }
         @keyframes blurFade {
             0% { filter: blur(0); }
@@ -264,6 +265,7 @@
 
         .anim-red-pulse-fade {
             animation: redPulseFade 1s forwards;
+            pointer-events: none;
         }
         @keyframes redPulseFade {
             0% { background-color: transparent; }
@@ -963,8 +965,8 @@
             'cond-exhaustion': { type: 'penalty', targets: ['app-force', 'app-willpower', 'app-influence'], animClass: 'anim-grayscale' },
             'cond-shame': { type: 'hide', target: 'section-personality', animClass: 'anim-shadow-fade' },
             'cond-fear': { type: 'hide', target: 'section-training', animClass: 'anim-tremble-fade' },
-            'cond-confusion': { type: 'hide', target: 'section-motives', animClass: 'condition-hidden' },
-            'cond-anger': { type: 'hide', target: 'section-bonds', animClass: 'condition-hidden' }
+            'cond-confusion': { type: 'hide', target: 'section-motives', animClass: 'anim-blur-fade' },
+            'cond-anger': { type: 'hide', target: 'section-bonds', animClass: 'anim-red-pulse-fade' }
         };
 
         function calculatePenalizedValue(val) {
