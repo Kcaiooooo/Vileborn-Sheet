@@ -39,11 +39,11 @@
             position: relative;
             box-sizing: border-box;
             z-index: 1;
-            transition: box-shadow 0.5s, filter 0.5s;
+            trition: box-shadow 0.5s, filter 0.5s;
         }
 
         input[type="text"], textarea, select {
-            background: transparent;
+            background: trparent;
             border: none;
             border-bottom: 1px solid rgba(0,0,0,0.2);
             font-family: var(--font-main);
@@ -63,7 +63,7 @@
         .watercolor-title {
             font-family: var(--font-title);
             font-size: 20px;
-            text-transform: uppercase;
+            text-trform: uppercase;
             letter-spacing: 2px;
             position: relative;
             display: inline-block;
@@ -957,7 +957,7 @@
             let match = str.match(/([+-]\d+)\s*\((d\d+)\)/);
             if (match) {
                 let mod = parseInt(match[1]);
-                let newMod = mod - 1;
+                let newMod = mod;
                 return `${newMod >= 0 ? '+' + newMod : newMod} (${match[2]})`;
             }
             return val;
