@@ -975,7 +975,7 @@
             let match = str.match(/([+-]\d+)\s*\((d\d+)\)/);
             if (match) {
                 let mod = parseInt(match[1]);
-                let newMod = mod - 1;
+                let newMod = mod;
                 return `${newMod >= 0 ? '+' + newMod : newMod} (${match[2]})`;
             }
             return val;
